@@ -53,7 +53,7 @@ impl<'ast> ExprParser {
                 Rule::plus | Rule::minus => {
                     let op = self.unop(pairs.next().unwrap());
                     let rhs = self.unary(pairs.next().unwrap().into_inner());
-                    Expr::unary(op, Box::new(rhs))
+                    Expr::unary(op, p!(rhs))
                 }
                 Rule::call => {
                     let mut call = pairs.next().unwrap().into_inner();
@@ -63,7 +63,7 @@ impl<'ast> ExprParser {
                     } else {
                         vec![]
                     };
-                    Expr::call(Box::new(callee), args)
+                    Expr::call(p!(callee), args)
                 }
                 Rule::primary => self.primary(pairs.next().unwrap().into_inner()),
                 _ => panic!("Invalid unary type: {:?}.", leftest),
