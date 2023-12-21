@@ -58,7 +58,11 @@ impl<'ast> ExprParser {
                 Rule::call => {
                     let mut call = pairs.next().unwrap().into_inner();
                     let callee = self.primary(call.next().unwrap().into_inner());
-                    let args = self.arguments(call.next().unwrap().into_inner());
+                    let args = if let Some(args) = call.next() {
+                        self.arguments(args.into_inner())
+                    } else {
+                        vec![]
+                    };
                     Expr::call(Box::new(callee), args)
                 }
                 Rule::primary => self.primary(pairs.next().unwrap().into_inner()),
@@ -105,7 +109,7 @@ impl<'ast> ExprParser {
 }
 
 fn main() {
-    let mut pairs = ExprParser::parse(Rule::expr, "1 + Sin(a, s, d, f)").unwrap();
+    let mut pairs = ExprParser::parse(Rule::expr, "Sin()").unwrap();
     let expr = ExprParser.expr(pairs.next().unwrap().into_inner());
     println!("{:?}", expr)
 }
