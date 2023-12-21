@@ -1,7 +1,6 @@
 use proc_macro::TokenStream;
-use std::fmt::format;
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Fields, Error, Type, Ident};
+use syn::{parse_macro_input, Data, DeriveInput, Fields, Error, Ident};
 use syn::spanned::Spanned;
 
 #[proc_macro_derive(ItemKind)]

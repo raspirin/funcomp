@@ -1,15 +1,15 @@
 use funcomp::ast::{BinOp, Expr, Ident, Lit, UnOp};
+use funcomp::p;
 use pest::iterators::{Pair, Pairs};
 use pest::Parser;
 use pest_derive::Parser;
-use funcomp::p;
 
 #[derive(Parser)]
 #[grammar = "expr.pest"]
 struct ExprParser;
 
 impl<'ast> ExprParser {
-    pub fn binop(&self, mut op: Pair<Rule>) -> BinOp {
+    pub fn binop(&self, op: Pair<Rule>) -> BinOp {
         match op.as_rule() {
             Rule::plus => BinOp::Plus,
             Rule::minus => BinOp::Minus,
@@ -19,7 +19,7 @@ impl<'ast> ExprParser {
         }
     }
 
-    pub fn unop(&self, mut op: Pair<Rule>) -> UnOp {
+    pub fn unop(&self, op: Pair<Rule>) -> UnOp {
         match op.as_rule() {
             Rule::plus => UnOp::Pos,
             Rule::minus => UnOp::Neg,
@@ -62,7 +62,7 @@ impl<'ast> ExprParser {
                     Expr::call(Box::new(callee), args)
                 }
                 Rule::primary => self.primary(pairs.next().unwrap().into_inner()),
-                _ => panic!("Invalid unary type: {:?}.", leftest)
+                _ => panic!("Invalid unary type: {:?}.", leftest),
             }
         } else {
             panic!("Invalid unary.")
@@ -76,22 +76,22 @@ impl<'ast> ExprParser {
                     let lit = Lit::Number(pairs.next().unwrap().as_str().parse().unwrap());
                     Expr::Lit(lit)
                 }
-                Rule::grouping => {
-                    self.grouping(pairs.next().unwrap().into_inner())
-                }
+                Rule::grouping => self.grouping(pairs.next().unwrap().into_inner()),
                 Rule::ident => {
                     let ident = pairs.next().unwrap();
-                    let ident = Ident { name: ident.as_str() };
+                    let ident = Ident {
+                        name: ident.as_str(),
+                    };
                     Expr::Ident(ident)
                 }
-                _ => panic!("Invalid primary type.")
+                _ => panic!("Invalid primary type."),
             }
         } else {
             panic!("Invalid primary.")
         }
     }
 
-    pub fn arguments(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Vec<Expr> {
+    pub fn arguments(&'ast self, pairs: Pairs<'ast, Rule>) -> Vec<Expr> {
         pairs.map(|pair| self.expr(pair.into_inner())).collect()
     }
 
