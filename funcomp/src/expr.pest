@@ -1,3 +1,11 @@
+// statement
+stmts  =  { stmt* }
+stmt   =  { draw | rot | scale | origin }
+draw   = !{ ^"for" ~ ident ~ ^"from" ~ expr ~ ^"to" ~ expr ~ ^"step" ~ expr ~ ^"draw" ~ "(" ~ expr ~ "," ~ expr ~ ")" ~ ";" }
+rot    = !{ ^"rot" ~ ^"is" ~ expr ~ ";" }
+scale  = !{ ^"scale" ~ ^"is" ~ expr ~ ";" }
+origin = !{ ^"origin" ~ ^"is" ~ expr ~ ";" }
+
 // expr
 expr      = !{ factor ~ ((plus | minus) ~ factor)* }
 factor    = !{ unary ~ ((asterisk | slash) ~ unary)* }
@@ -18,4 +26,4 @@ number = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
 ident  = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
 
 // whitespace
-WHITESPACE = _{ " " }
+WHITESPACE = _{ " " | NEWLINE }
