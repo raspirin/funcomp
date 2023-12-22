@@ -1,5 +1,6 @@
+source = { SOI ~ "\n"* ~ (stmt)* ~ stmt? ~ EOI }
+
 // statement
-stmts  =  { stmt* }
 stmt   =  { draw | rot | scale | origin }
 draw   = !{ ^"for" ~ ident ~ ^"from" ~ expr ~ ^"to" ~ expr ~ ^"step" ~ expr ~ ^"draw" ~ "(" ~ expr ~ "," ~ expr ~ ")" ~ ";" }
 rot    = !{ ^"rot" ~ ^"is" ~ expr ~ ";" }
@@ -26,4 +27,7 @@ number = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
 ident  = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
 
 // whitespace
-WHITESPACE = _{ " " | NEWLINE }
+WHITESPACE = _{ PATTERN_WHITE_SPACE }
+
+// comment
+COMMENT = _{ "//" ~ (LETTER | NUMBER | MARK | PUNCTUATION | SYMBOL)* ~ WHITESPACE? }
