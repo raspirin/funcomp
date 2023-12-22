@@ -59,7 +59,7 @@ impl<'ast> SrcParser {
         }
     }
 
-    pub fn ast(&'ast self, pairs: Pairs<'ast, Rule>) -> Vec<Stmt> {
+    pub fn source(&'ast self, pairs: Pairs<'ast, Rule>) -> Vec<Stmt> {
         let mut ret = vec![];
         for statement in pairs {
             match statement.as_rule() {

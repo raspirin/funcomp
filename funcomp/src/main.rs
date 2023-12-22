@@ -2,7 +2,11 @@ use funcomp::parser::{Rule, SrcParser};
 use pest::Parser;
 
 fn main() {
-    let pairs = SrcParser::parse(Rule::source, "rot is 1 + Sin(1);").unwrap();
-    let source = SrcParser.ast(pairs);
+    let source = r#"rot is 2;
+// comment
+origin is T + Sin(T,               );
+"#;
+    let pairs = SrcParser::parse(Rule::source, source).unwrap();
+    let source = SrcParser.source(pairs);
     println!("{:?}", source)
 }
