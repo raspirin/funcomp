@@ -28,12 +28,10 @@ pub fn derive(input: TokenStream) -> TokenStream {
             let mut var_field_idents = vec![];
             let mut var_tys = vec![];
             if let Fields::Unnamed(fields) = var.fields {
-                let mut counter = 0;
-                for field in fields.unnamed {
+                for (counter, field) in fields.unnamed.into_iter().enumerate() {
                     let span = field.ty.span();
                     var_tys.push(field.ty);
                     var_field_idents.push(Ident::new(&format!("a{counter}"), span));
-                    counter += 1;
                 }
             } else {
                 return Error::new(
