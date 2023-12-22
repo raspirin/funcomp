@@ -1,4 +1,4 @@
-use crate::ast::{BinOp, Expr, Ident, Lit, UnOp};
+use crate::ast::{BinOp, Expr, Ident, Lit, Stmt, UnOp};
 use crate::p;
 use pest::iterators::{Pair, Pairs};
 use pest_derive::Parser;
@@ -59,25 +59,36 @@ impl<'ast> SrcParser {
         }
     }
 
-    pub fn expr(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Expr {
-        let mut expr = self.factor(pairs.next().unwrap().into_inner());
-        while let Some(_) = pairs.peek() {
-            let op = self.binop(pairs.next().unwrap());
-            let rhs = self.factor(pairs.next().unwrap().into_inner());
-            expr = Expr::Binary(p!(expr), op, p!(rhs))
+    pub fn stmt(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Stmt {
+        if let Some(statement) = pairs.next() {
+            match statement.as_rule() {
+                Rule::draw => self.draw(statement.into_inner()),
+                Rule::rot => self.rot(statement.into_inner()),
+                Rule::scale => self.scale(statement.into_inner()),
+                Rule::origin => self.origin(statement.into_inner()),
+                _ => panic!("Invalid statement type."),
+            }
+        } else {
+            panic!("Invalid statement.")
         }
-        expr
     }
 
-    pub fn factor(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Expr {
-        let mut expr = self.unary(pairs.next().unwrap().into_inner());
-        while let Some(_) = pairs.peek() {
-            let op = self.binop(pairs.next().unwrap());
-            let rhs = self.unary(pairs.next().unwrap().into_inner());
-            expr = Expr::Binary(p!(expr), op, p!(rhs));
-        }
-        expr
+    single_expr_stmt! {rot}
+    single_expr_stmt! {scale}
+    single_expr_stmt! {origin}
+
+    pub fn draw(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Stmt {
+        let ident = self.ident(pairs.next().unwrap());
+        let from = self.expr(pairs.next().unwrap().into_inner());
+        let to = self.expr(pairs.next().unwrap().into_inner());
+        let step = self.expr(pairs.next().unwrap().into_inner());
+        let x = self.expr(pairs.next().unwrap().into_inner());
+        let y = self.expr(pairs.next().unwrap().into_inner());
+        Stmt::Draw(p!(ident), p!(from), p!(to), p!(step), p!(x), p!(y))
     }
+
+    dual_operand_expr! {expr, "expr", factor}
+    dual_operand_expr! {factor, "factor", unary}
 
     pub fn unary(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Expr {
         if let Some(leftest) = pairs.peek() {
@@ -110,21 +121,22 @@ impl<'ast> SrcParser {
             match primary.as_rule() {
                 Rule::number => {
                     let lit = Lit::Number(pairs.next().unwrap().as_str().parse().unwrap());
-                    Expr::Lit(lit)
+                    Expr::lit(lit)
                 }
                 Rule::grouping => self.grouping(pairs.next().unwrap().into_inner()),
-                Rule::ident => {
-                    let ident = pairs.next().unwrap();
-                    let ident = Ident {
-                        name: ident.as_str(),
-                    };
-                    Expr::Ident(ident)
-                }
+                Rule::ident => self.ident(pairs.next().unwrap()),
                 _ => panic!("Invalid primary type."),
             }
         } else {
             panic!("Invalid primary.")
         }
+    }
+
+    pub fn ident(&'ast self, pair: Pair<'ast, Rule>) -> Expr {
+        let ident = Ident {
+            name: pair.as_str(),
+        };
+        Expr::ident(ident)
     }
 
     pub fn arguments(&'ast self, pairs: Pairs<'ast, Rule>) -> Vec<Expr> {
