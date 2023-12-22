@@ -48,7 +48,14 @@ pub enum Expr<'ast> {
 
 #[derive(ItemKind, Debug)]
 pub enum Stmt<'ast> {
-    Draw(P!(Expr<'ast>), P!(Expr<'ast>), P!(Expr<'ast>), P!(Expr<'ast>), P!(Expr<'ast>), P!(Expr<'ast>)),
+    Draw(
+        P!(Expr<'ast>),
+        P!(Expr<'ast>),
+        P!(Expr<'ast>),
+        P!(Expr<'ast>),
+        P!(Expr<'ast>),
+        P!(Expr<'ast>),
+    ),
     Rot(P!(Expr<'ast>)),
     Scale(P!(Expr<'ast>)),
     Origin(P!(Expr<'ast>)),

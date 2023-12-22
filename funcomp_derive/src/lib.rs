@@ -1,7 +1,7 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, Data, DeriveInput, Fields, Error, Ident};
 use syn::spanned::Spanned;
+use syn::{parse_macro_input, Data, DeriveInput, Error, Fields, Ident};
 
 #[proc_macro_derive(ItemKind)]
 pub fn derive(input: TokenStream) -> TokenStream {
@@ -20,7 +20,10 @@ pub fn derive(input: TokenStream) -> TokenStream {
 
     if let Data::Enum(data_enum) = item_data {
         for var in data_enum.variants {
-            var_ident_lower.push(Ident::new(&var.ident.to_string().to_lowercase(), var.span()));
+            var_ident_lower.push(Ident::new(
+                &var.ident.to_string().to_lowercase(),
+                var.span(),
+            ));
             var_ident.push(var.ident);
             let mut var_field_idents = vec![];
             let mut var_tys = vec![];
@@ -33,13 +36,20 @@ pub fn derive(input: TokenStream) -> TokenStream {
                     counter += 1;
                 }
             } else {
-                return Error::new(var.fields.span(), "ItemKind can only used with unnamed fields.").into_compile_error().into()
+                return Error::new(
+                    var.fields.span(),
+                    "ItemKind can only used with unnamed fields.",
+                )
+                .into_compile_error()
+                .into();
             }
             var_fields_ident.push(var_field_idents);
             var_fields.push(var_tys);
         }
     } else {
-        return Error::new(item_ident.span(), "ItemKind can only used with enum.").into_compile_error().into()
+        return Error::new(item_ident.span(), "ItemKind can only used with enum.")
+            .into_compile_error()
+            .into();
     }
 
     let out = quote! {
