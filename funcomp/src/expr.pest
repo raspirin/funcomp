@@ -1,4 +1,4 @@
-source = { SOI ~ "\n"* ~ (stmt)* ~ stmt? ~ EOI }
+source = _{ SOI ~ "\n"* ~ (stmt)* ~ stmt? ~ EOI }
 
 // statement
 stmt   =  { draw | rot | scale | origin }
