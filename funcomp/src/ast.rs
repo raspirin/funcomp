@@ -59,4 +59,5 @@ pub enum Stmt<'ast> {
     Rot(P!(Expr<'ast>)),
     Scale(P!(Expr<'ast>)),
     Origin(P!(Expr<'ast>)),
+    EOI,
 }

@@ -59,6 +59,22 @@ impl<'ast> SrcParser {
         }
     }
 
+    pub fn ast(&'ast self, pairs: Pairs<'ast, Rule>) -> Vec<Stmt> {
+        let mut ret = vec![];
+        for statement in pairs {
+            match statement.as_rule() {
+                Rule::stmt => {
+                    ret.push(self.stmt(statement.into_inner()));
+                }
+                Rule::EOI => {
+                    ret.push(Stmt::eoi());
+                }
+                _ => panic!("Invalid statement type.")
+            }
+        }
+        ret
+    }
+
     pub fn stmt(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Stmt {
         if let Some(statement) = pairs.next() {
             match statement.as_rule() {
