@@ -15,6 +15,14 @@ pub struct StaticChecker {
     pub environment: Environment,
 }
 
+impl StaticChecker {
+    pub fn check(&mut self, src: &[Stmt]) {
+        for stmt in src.iter() {
+            self.visit_stmt(stmt)
+        }
+    }
+}
+
 impl<'ast> Visitor<'ast> for StaticChecker {
     fn visit_expr(&mut self, expr: &Expr<'ast>) {
         walk_expr(self, expr);
@@ -39,6 +47,10 @@ impl<'ast> Visitor<'ast> for StaticChecker {
                     let ty = self.stack.pop().unwrap();
                     args_ty.push(ty);
                 }
+                if args_ty.len() != 1 {
+                    panic!("Too much arguments.")
+                }
+
                 let callee = self.stack.pop().unwrap();
                 if callee != ValueType::Callable {
                     panic!("Expect a valid func in call-expr.")
