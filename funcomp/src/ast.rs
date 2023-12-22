@@ -12,7 +12,7 @@ macro_rules! p {
     };
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BinOp {
     Plus,
     Minus,
@@ -20,18 +20,18 @@ pub enum BinOp {
     Slash,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum UnOp {
     Neg,
     Pos,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Lit {
     Number(f32),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Ident<'ast> {
     pub name: &'ast str,
 }
