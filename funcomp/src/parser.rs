@@ -3,6 +3,39 @@ use crate::p;
 use pest::iterators::{Pair, Pairs};
 use pest_derive::Parser;
 
+macro_rules! single_expr_stmt {
+    ($expr: ident) => {
+        pub fn $expr(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Stmt {
+            let ident = self.expr(pairs.next().unwrap().into_inner());
+            Stmt::$expr(p!(ident))
+        }
+    };
+}
+
+macro_rules! dual_operand_expr {
+    ($expr: ident, $lit: literal, $upstream: ident) => {
+        pub fn $expr(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Expr {
+            let lit = ::std::string::String::from($lit);
+            if let Some(expr) = pairs.next() {
+                match expr.as_rule() {
+                    Rule::$upstream => {
+                        let mut expr = self.$upstream(expr.into_inner());
+                        while let Some(_) = pairs.peek() {
+                            let op = self.binop(pairs.next().unwrap());
+                            let rhs = self.$upstream(pairs.next().unwrap().into_inner());
+                            expr = Expr::binary(p!(expr), op, p!(rhs));
+                        }
+                        expr
+                    }
+                    _ => panic!("Invalid {} type.", lit),
+                }
+            } else {
+                panic!("Invalid {}.", lit)
+            }
+        }
+    };
+}
+
 #[derive(Parser)]
 #[grammar = "expr.pest"]
 pub struct SrcParser;
