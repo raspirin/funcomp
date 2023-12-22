@@ -25,7 +25,7 @@ impl Default for Environment {
         lookup_list!(
             lookup,
             IdentTy::Func,
-            ["Sin", "Cos", "Exp", "Sqrt", "Ln"]
+            ["Sin", "Cos", "Exp", "Sqrt", "Ln", "Tan"]
         );
         lookup.insert("PI".into(), IdentTy::Const);
         Self { lookup }
