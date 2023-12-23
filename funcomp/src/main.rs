@@ -4,9 +4,8 @@ use funcomp::parser::{Rule, SrcParser};
 use pest::Parser;
 
 fn main() {
-    let source = r#"rot is 2 + 1 * Sin(PI);
-origin is (Sin(Cos(PI)), PI);
-scale is (Sin(1), Cos(1));
+    let source = r#"
+origin is (PI, PI);
 for T from 1 to 20 step 1 draw (T, T);
 "#;
     let mut static_checker = StaticChecker::default();

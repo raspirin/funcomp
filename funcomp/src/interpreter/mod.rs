@@ -1,15 +1,15 @@
 use crate::ast::{BinOp, Expr, Lit, Stmt, UnOp};
 use crate::interpreter::environment::{Environment, IdentTy};
+use crate::interpreter::runtime_solver::RuntimeSolver;
 use crate::interpreter::visit::{walk_expr, walk_stmt, Visitor};
 use crate::p;
 use std::f32::consts::PI;
 use std::ops::Neg;
-use crate::interpreter::runtime_solver::RuntimeSolver;
 
 pub mod environment;
+pub mod runtime_solver;
 pub mod static_checker;
 pub mod visit;
-pub mod runtime_solver;
 
 #[derive(Clone)]
 pub struct State {
@@ -26,11 +26,6 @@ impl Default for State {
             scale: (1., 1.),
         }
     }
-}
-
-pub struct DrawUnit {
-    pub state: State,
-    pub dots: Vec<(f32, f32)>,
 }
 
 impl State {
@@ -101,7 +96,7 @@ impl<'ast> Interpreter<'ast> {
                     for i in 0.. {
                         if from + (i as f32 * step) > to {
                             range.push(to);
-                            break
+                            break;
                         } else {
                             range.push(from + (i as f32 * step));
                         }
@@ -113,7 +108,17 @@ impl<'ast> Interpreter<'ast> {
                     let xys: Vec<(f32, f32)> = xs.into_iter().zip(ys.into_iter()).collect();
 
                     // second transform: apply the effect of Rot/Scale/Origin
-
+                    let xys = xys
+                        .into_iter()
+                        .map(|(x, y)| (x / self.state.scale.0, y / self.state.scale.1))
+                        .map(|(x, y)| {
+                            let rad = self.state.rot;
+                            (x * rad.cos() + y * rad.sin(), y * rad.cos() - x * rad.sin())
+                        })
+                        .map(|(x, y)| (x - self.state.origin.0, y - self.state.origin.1));
+                    for dot in xys {
+                        println!("x: {}, y: {}", dot.0, dot.1);
+                    }
                 }
                 Stmt::Rot(expr) => {
                     let lit = deref_lit!(expr, "Expect a Const in Rot");
