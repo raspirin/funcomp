@@ -3,4 +3,5 @@ resolver = "2"
 members = [
     "funcomp",
     "funcomp_derive",
+    "funcomp_plot"
 ]
