@@ -42,14 +42,62 @@ pub struct Interpreter<'ast> {
     pub statements: Vec<Stmt<'ast>>,
 }
 
+macro_rules! deref_lit {
+    ($lit: expr, $error: literal) => {
+        if let Expr::Lit(Lit::Number(lit)) = &**$lit {
+            *lit
+        } else {
+            panic!($error)
+        }
+    };
+}
+
 impl<'ast> Interpreter<'ast> {
-    pub fn resolve(&'ast mut self, src: &[Stmt<'ast>]) {
+    pub fn accept(mut self, src: &[Stmt<'ast>]) -> Self {
         for stmt in src.iter() {
             self.visit_stmt(stmt);
         }
         for i in self.statements.iter() {
             println!("{:?}", i)
         }
+        self
+    }
+
+    pub fn interpret(mut self) -> Self {
+        for stmt in self.statements.iter() {
+            match stmt {
+                Stmt::Draw(_, from, to, step, x, y) => {
+                    let mut from = deref_lit!(from, "Expect a Const in from of Draw");
+                    let mut to = deref_lit!(to, "Expect a Const in to of Draw");
+                    let step = deref_lit!(step, "Expect a Const in step of Draw");
+
+                    if from > to {
+                        std::mem::swap(&mut from, &mut to);
+                    }
+
+                    let diff = to - from;
+                    if diff < step {
+                        panic!("Step should smaller than diff between from and to.")
+                    }
+                }
+                Stmt::Rot(expr) => {
+                    let lit = deref_lit!(expr, "Expect a Const in Rot");
+                    self.state.rot = lit;
+                }
+                Stmt::Scale(x, y) => {
+                    let x = deref_lit!(x, "Expect a Const in x of Scale");
+                    let y = deref_lit!(y, "Expect a Const in y of Scale");
+                    self.state.scale = (x, y);
+                }
+                Stmt::Origin(x, y) => {
+                    let x = deref_lit!(x, "Expect a Const in x of Origin");
+                    let y = deref_lit!(y, "Expect a Const in y of Origin");
+                    self.state.origin = (x, y);
+                }
+                Stmt::EOI => {}
+            }
+        }
+        self
     }
 }
 
