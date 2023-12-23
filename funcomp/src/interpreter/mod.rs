@@ -24,6 +24,14 @@ impl State {
     pub fn set_scale_y(&mut self, y: f32) {
         self.scale.1 = y;
     }
+
+    pub fn set_origin_x(&mut self, x: f32) {
+        self.scale.0 = x;
+    }
+
+    pub fn set_origin_y(&mut self, y: f32) {
+        self.origin.1 = y;
+    }
 }
 
 #[derive(Default)]
