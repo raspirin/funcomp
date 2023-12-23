@@ -4,16 +4,33 @@ use crate::interpreter::visit::{walk_expr, walk_stmt, Visitor};
 use crate::p;
 use std::f32::consts::PI;
 use std::ops::Neg;
+use crate::interpreter::runtime_solver::RuntimeSolver;
 
 pub mod environment;
 pub mod static_checker;
 pub mod visit;
+pub mod runtime_solver;
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct State {
     pub rot: f32,
     pub origin: (f32, f32),
     pub scale: (f32, f32),
+}
+
+impl Default for State {
+    fn default() -> Self {
+        Self {
+            rot: 0.,
+            origin: (0., 0.),
+            scale: (1., 1.),
+        }
+    }
+}
+
+pub struct DrawUnit {
+    pub state: State,
+    pub dots: Vec<(f32, f32)>,
 }
 
 impl State {
@@ -79,6 +96,24 @@ impl<'ast> Interpreter<'ast> {
                     if diff < step {
                         panic!("Step should smaller than diff between from and to.")
                     }
+
+                    let mut range = vec![];
+                    for i in 0.. {
+                        if from + (i as f32 * step) > to {
+                            range.push(to);
+                            break
+                        } else {
+                            range.push(from + (i as f32 * step));
+                        }
+                    }
+                    let mut solver = RuntimeSolver::new(range);
+                    let xs = solver.solve_all(x);
+                    let ys = solver.solve_all(y);
+                    // first transform: from func to dots
+                    let xys: Vec<(f32, f32)> = xs.into_iter().zip(ys.into_iter()).collect();
+
+                    // second transform: apply the effect of Rot/Scale/Origin
+
                 }
                 Stmt::Rot(expr) => {
                     let lit = deref_lit!(expr, "Expect a Const in Rot");

@@ -5,9 +5,9 @@ use pest::Parser;
 
 fn main() {
     let source = r#"rot is 2 + 1 * Sin(PI);
-origin is (Sin(Cos(PI)), 1);
+origin is (Sin(Cos(PI)), PI);
 scale is (Sin(1), Cos(1));
-for T from 1 to 2 step 0.3 draw (Sin(T), Cos(T));
+for T from 1 to 20 step 1 draw (T, T);
 "#;
     let mut static_checker = StaticChecker::default();
     let interpreter = Interpreter::default();
