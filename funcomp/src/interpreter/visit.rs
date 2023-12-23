@@ -44,9 +44,7 @@ pub fn walk_stmt<'ast, V: Visitor<'ast>>(visitor: &mut V, stmt: &Stmt<'ast>) {
         Stmt::Draw(a0, a1, a2, a3, a4, a5) => {
             walk_list!(visitor, visit_expr, vec![a0, a1, a2, a3, a4, a5]);
         }
-        Stmt::Rot(a0) => {
-            visitor.visit_expr(a0)
-        }
+        Stmt::Rot(a0) => visitor.visit_expr(a0),
         Stmt::Scale(a0, a1) => {
             visitor.visit_expr(a0);
             visitor.visit_expr(a1);

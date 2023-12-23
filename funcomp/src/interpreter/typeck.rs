@@ -1,6 +1,6 @@
 use crate::ast::{Expr, Stmt};
 use crate::interpreter::environment::{Environment, IdentTy};
-use crate::interpreter::visit::{Visitor, walk_expr, walk_stmt};
+use crate::interpreter::visit::{walk_expr, walk_stmt, Visitor};
 
 #[derive(Eq, PartialEq)]
 pub enum ValueType {
@@ -33,8 +33,12 @@ impl<'ast> Visitor<'ast> for StaticChecker {
                 match (lhs, rhs) {
                     (ValueType::Const, ValueType::Const) => self.stack.push(ValueType::Const),
                     (ValueType::Var, ValueType::Var) => self.stack.push(ValueType::Var),
-                    (ValueType::Const, ValueType::Var) | (ValueType::Var, ValueType::Const) => self.stack.push(ValueType::Var),
-                    (ValueType::Callable, _) | (_, ValueType::Callable) => self.stack.push(ValueType::Callable),
+                    (ValueType::Const, ValueType::Var) | (ValueType::Var, ValueType::Const) => {
+                        self.stack.push(ValueType::Var)
+                    }
+                    (ValueType::Callable, _) | (_, ValueType::Callable) => {
+                        self.stack.push(ValueType::Callable)
+                    }
                 }
             }
             Expr::Unary(_, _) => {
@@ -65,9 +69,7 @@ impl<'ast> Visitor<'ast> for StaticChecker {
                 let inner = self.stack.pop().unwrap();
                 self.stack.push(inner);
             }
-            Expr::Lit(_) => {
-                self.stack.push(ValueType::Const)
-            }
+            Expr::Lit(_) => self.stack.push(ValueType::Const),
             Expr::Ident(ident) => {
                 let name = ident.name;
                 let lookup = self.environment.lookup.get(name);
@@ -102,7 +104,7 @@ impl<'ast> Visitor<'ast> for StaticChecker {
                     panic!("Expect a Const in <from>/<to>/<step>")
                 }
             }
-            Stmt::Rot(_)  => {
+            Stmt::Rot(_) => {
                 let expr = self.stack.pop().unwrap();
                 if expr != ValueType::Const {
                     panic!("Expect a Const in Rot")

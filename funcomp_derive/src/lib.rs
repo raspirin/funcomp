@@ -27,17 +27,11 @@ pub fn derive(input: TokenStream) -> TokenStream {
             let span = var.span();
             match var.fields {
                 Fields::Unit => {
-                    unit_ident_lower.push(Ident::new(
-                        &var.ident.to_string().to_lowercase(),
-                        span,
-                    ));
+                    unit_ident_lower.push(Ident::new(&var.ident.to_string().to_lowercase(), span));
                     unit_ident.push(var.ident);
-                },
+                }
                 Fields::Unnamed(fields) => {
-                    var_ident_lower.push(Ident::new(
-                        &var.ident.to_string().to_lowercase(),
-                        span,
-                    ));
+                    var_ident_lower.push(Ident::new(&var.ident.to_string().to_lowercase(), span));
                     var_ident.push(var.ident);
                     for (counter, field) in fields.unnamed.into_iter().enumerate() {
                         let span = field.ty.span();
@@ -50,8 +44,8 @@ pub fn derive(input: TokenStream) -> TokenStream {
                         var.fields.span(),
                         "ItemKind can only used with unnamed fields.",
                     )
-                        .into_compile_error()
-                        .into();
+                    .into_compile_error()
+                    .into();
                 }
             }
 

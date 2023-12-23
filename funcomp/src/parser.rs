@@ -79,7 +79,7 @@ impl<'ast> SrcParser {
                 Rule::EOI => {
                     ret.push(Stmt::eoi());
                 }
-                _ => panic!("Invalid statement type.")
+                _ => panic!("Invalid statement type."),
             }
         }
         ret

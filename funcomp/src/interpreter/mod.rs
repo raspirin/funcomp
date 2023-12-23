@@ -2,7 +2,6 @@ use crate::ast::{BinOp, Expr, Lit, Stmt, UnOp};
 use crate::interpreter::environment::{Environment, IdentTy};
 use crate::interpreter::visit::{walk_expr, walk_stmt, Visitor};
 use crate::p;
-use crate::parser::Rule::source;
 use std::f32::consts::PI;
 use std::ops::Neg;
 

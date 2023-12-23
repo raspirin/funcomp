@@ -1,7 +1,7 @@
+use funcomp::interpreter::typeck::StaticChecker;
+use funcomp::interpreter::Interpreter;
 use funcomp::parser::{Rule, SrcParser};
 use pest::Parser;
-use funcomp::interpreter::Interpreter;
-use funcomp::interpreter::typeck::StaticChecker;
 
 fn main() {
     let source = r#"rot is 2 + 1 * Sin(PI);
