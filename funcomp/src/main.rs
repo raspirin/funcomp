@@ -5,7 +5,9 @@ use funcomp::interpreter::typeck::StaticChecker;
 
 fn main() {
     let source = r#"rot is 2 + 1 * Sin(PI);
-origin is Sin(Cos(PI));
+origin is (Sin(Cos(PI)), 1);
+scale is (Sin(1), Cos(1));
+for T from 1 to 2 step 3 draw (Sin(T), Cos(T));
 "#;
     let mut static_checker = StaticChecker::default();
     let mut interpreter = Interpreter::default();
@@ -14,6 +16,5 @@ origin is Sin(Cos(PI));
     static_checker.check(&source);
     interpreter.resolve(&source)
 
-    // FIXME: grammar for scale and origin is wrong!
     // TODO: interpret func!
 }

@@ -13,7 +13,7 @@ pub mod visit;
 #[derive(Clone, Default)]
 pub struct State {
     pub rot: f32,
-    pub origin: f32,
+    pub origin: (f32, f32),
     pub scale: (f32, f32),
 }
 
@@ -131,13 +131,15 @@ impl<'ast> Visitor<'ast> for Interpreter<'ast> {
                 let inner = self.cal_stack.pop().unwrap();
                 self.statements.push(Stmt::rot(p!(inner)));
             }
-            Stmt::Scale(_) => {
-                let inner = self.cal_stack.pop().unwrap();
-                self.statements.push(Stmt::scale(p!(inner)));
+            Stmt::Scale(_, _) => {
+                let rhs = self.cal_stack.pop().unwrap();
+                let lhs = self.cal_stack.pop().unwrap();
+                self.statements.push(Stmt::scale(p!(lhs), p!(rhs)));
             }
-            Stmt::Origin(_) => {
-                let inner = self.cal_stack.pop().unwrap();
-                self.statements.push(Stmt::origin(p!(inner)));
+            Stmt::Origin(_, _) => {
+                let rhs = self.cal_stack.pop().unwrap();
+                let lhs = self.cal_stack.pop().unwrap();
+                self.statements.push(Stmt::origin(p!(lhs), p!(rhs)));
             }
             Stmt::Draw(_, _, _, _, _, _) => {
                 let y = self.cal_stack.pop().unwrap();

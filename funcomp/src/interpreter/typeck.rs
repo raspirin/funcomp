@@ -102,10 +102,17 @@ impl<'ast> Visitor<'ast> for StaticChecker {
                     panic!("Expect a Const in <from>/<to>/<step>")
                 }
             }
-            Stmt::Rot(_) | Stmt::Scale(_) | Stmt::Origin(_) => {
+            Stmt::Rot(_)  => {
                 let expr = self.stack.pop().unwrap();
                 if expr != ValueType::Const {
-                    panic!("Expect a Const in Rot/Scale/Origin")
+                    panic!("Expect a Const in Rot")
+                }
+            }
+            Stmt::Scale(_, _) | Stmt::Origin(_, _) => {
+                let rhs = self.stack.pop().unwrap();
+                let lhs = self.stack.pop().unwrap();
+                if lhs != ValueType::Const || rhs != ValueType::Const {
+                    panic!("Expect a Const in Scale/Origin")
                 }
             }
             Stmt::EOI => {}

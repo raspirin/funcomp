@@ -12,6 +12,16 @@ macro_rules! single_expr_stmt {
     };
 }
 
+macro_rules! dual_expr_stmt {
+    ($expr: ident) => {
+        pub fn $expr(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Stmt {
+            let lhs = self.expr(pairs.next().unwrap().into_inner());
+            let rhs = self.expr(pairs.next().unwrap().into_inner());
+            Stmt::$expr(p!(lhs), p!(rhs))
+        }
+    };
+}
+
 macro_rules! dual_operand_expr {
     ($expr: ident, $lit: literal, $upstream: ident) => {
         pub fn $expr(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Expr {
@@ -90,8 +100,8 @@ impl<'ast> SrcParser {
     }
 
     single_expr_stmt! {rot}
-    single_expr_stmt! {scale}
-    single_expr_stmt! {origin}
+    dual_expr_stmt! {scale}
+    dual_expr_stmt! {origin}
 
     pub fn draw(&'ast self, mut pairs: Pairs<'ast, Rule>) -> Stmt {
         let ident = self.ident(pairs.next().unwrap());

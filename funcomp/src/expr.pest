@@ -4,8 +4,8 @@ source = _{ SOI ~ "\n"* ~ (stmt)* ~ stmt? ~ EOI }
 stmt   =  { draw | rot | scale | origin }
 draw   = !{ ^"for" ~ ident ~ ^"from" ~ expr ~ ^"to" ~ expr ~ ^"step" ~ expr ~ ^"draw" ~ "(" ~ expr ~ "," ~ expr ~ ")" ~ ";" }
 rot    = !{ ^"rot" ~ ^"is" ~ expr ~ ";" }
-scale  = !{ ^"scale" ~ ^"is" ~ expr ~ ";" }
-origin = !{ ^"origin" ~ ^"is" ~ expr ~ ";" }
+scale  = !{ ^"scale" ~ ^"is" ~ "(" ~ expr ~ "," ~ expr ~ ")" ~ ";" }
+origin = !{ ^"origin" ~ ^"is" ~ "(" ~ expr ~ "," ~ expr ~ ")" ~ ";" }
 
 // expr
 expr      = !{ factor ~ ((plus | minus) ~ factor)* }

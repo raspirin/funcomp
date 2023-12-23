@@ -47,11 +47,13 @@ pub fn walk_stmt<'ast, V: Visitor<'ast>>(visitor: &mut V, stmt: &Stmt<'ast>) {
         Stmt::Rot(a0) => {
             visitor.visit_expr(a0)
         }
-        Stmt::Scale(a0) => {
-            visitor.visit_expr(a0)
+        Stmt::Scale(a0, a1) => {
+            visitor.visit_expr(a0);
+            visitor.visit_expr(a1);
         }
-        Stmt::Origin(a0) => {
-            visitor.visit_expr(a0)
+        Stmt::Origin(a0, a1) => {
+            visitor.visit_expr(a0);
+            visitor.visit_expr(a1);
         }
         Stmt::EOI => {}
     }
