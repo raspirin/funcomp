@@ -18,15 +18,18 @@ impl RuntimeSolver {
             cur_t: 0.,
         }
     }
-    
+
     pub fn solve_all(&mut self, expr: &Expr) -> Vec<f32> {
-        self.t.clone().iter().map(|t| {
-            self.cur_t = *t;
-            self.visit_expr(expr);
-            self.stack.pop().unwrap()
-        }).collect()
+        self.t
+            .clone()
+            .iter()
+            .map(|t| {
+                self.cur_t = *t;
+                self.visit_expr(expr);
+                self.stack.pop().unwrap()
+            })
+            .collect()
     }
-    
 }
 
 impl<'ast> Visitor<'ast> for RuntimeSolver {
@@ -57,17 +60,15 @@ impl<'ast> Visitor<'ast> for RuntimeSolver {
                     let name = callee.name;
                     if let Some(lookup) = self.environment.lookup.get(name) {
                         match lookup {
-                            IdentTy::Func => {
-                                match name {
-                                    "Sin" => self.stack.push(f32::sin(arg)),
-                                    "Cos" => self.stack.push(f32::cos(arg)),
-                                    "Tan" => self.stack.push(f32::tan(arg)),
-                                    "Exp" => self.stack.push(f32::exp2(arg)),
-                                    "Sqrt" => self.stack.push(f32::sqrt(arg)),
-                                    "Ln" => self.stack.push(f32::ln(arg)),
-                                    _ => panic!("Invalid func name during runtime.")
-                                }
-                            }
+                            IdentTy::Func => match name {
+                                "Sin" => self.stack.push(f32::sin(arg)),
+                                "Cos" => self.stack.push(f32::cos(arg)),
+                                "Tan" => self.stack.push(f32::tan(arg)),
+                                "Exp" => self.stack.push(f32::exp2(arg)),
+                                "Sqrt" => self.stack.push(f32::sqrt(arg)),
+                                "Ln" => self.stack.push(f32::ln(arg)),
+                                _ => panic!("Invalid func name during runtime."),
+                            },
                             IdentTy::Var => {}
                             IdentTy::Const => {}
                         }
