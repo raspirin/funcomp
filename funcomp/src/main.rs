@@ -1,4 +1,4 @@
-use funcomp::interpreter::typeck::StaticChecker;
+use funcomp::interpreter::static_checker::StaticChecker;
 use funcomp::interpreter::Interpreter;
 use funcomp::parser::{Rule, SrcParser};
 use pest::Parser;

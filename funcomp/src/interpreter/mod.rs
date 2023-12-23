@@ -6,7 +6,7 @@ use std::f32::consts::PI;
 use std::ops::Neg;
 
 pub mod environment;
-pub mod typeck;
+pub mod static_checker;
 pub mod visit;
 
 #[derive(Clone, Default)]
