@@ -9,3 +9,4 @@ edition = "2021"
 pest = "2.7.5"
 pest_derive = "2.7.5"
 funcomp_derive = { path = "../funcomp_derive" }
+funcomp_plot = { path = "../funcomp_plot" }

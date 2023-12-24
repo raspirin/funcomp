@@ -5,8 +5,8 @@ use pest::Parser;
 
 fn main() {
     let source = r#"
-origin is (PI, PI);
-for T from 1 to 20 step 1 draw (T, T);
+for T from 1 to 200 step 2 draw (T, T);
+
 "#;
     let mut static_checker = StaticChecker::default();
     let interpreter = Interpreter::default();

@@ -5,6 +5,8 @@ use crate::interpreter::visit::{walk_expr, walk_stmt, Visitor};
 use crate::p;
 use std::f32::consts::PI;
 use std::ops::Neg;
+use funcomp_plot::{Draw, draw, get_drawing_area};
+use funcomp_plot::{RED, EmptyElement, ShapeStyle, Circle};
 
 pub mod environment;
 pub mod runtime_solver;
@@ -46,12 +48,24 @@ impl State {
     }
 }
 
-#[derive(Default)]
 pub struct Interpreter<'ast> {
     pub environment: Environment,
     pub state: State,
     pub cal_stack: Vec<Expr<'ast>>,
     pub statements: Vec<Stmt<'ast>>,
+    pub draw: Draw<'ast>,
+}
+
+impl<'ast> Default for Interpreter<'ast> {
+    fn default() -> Self {
+        Self {
+            environment: Environment::default(),
+            state: State::default(),
+            cal_stack: vec![],
+            statements: vec![],
+            draw: get_drawing_area("out.png"),
+        }
+    }
 }
 
 macro_rules! deref_lit {
@@ -110,15 +124,13 @@ impl<'ast> Interpreter<'ast> {
                     // second transform: apply the effect of Rot/Scale/Origin
                     let xys = xys
                         .into_iter()
-                        .map(|(x, y)| (x / self.state.scale.0, y / self.state.scale.1))
+                        .map(|(x, y)| (x * self.state.scale.0, y * self.state.scale.1))
                         .map(|(x, y)| {
                             let rad = self.state.rot;
                             (x * rad.cos() + y * rad.sin(), y * rad.cos() - x * rad.sin())
                         })
-                        .map(|(x, y)| (x - self.state.origin.0, y - self.state.origin.1));
-                    for dot in xys {
-                        println!("x: {}, y: {}", dot.0, dot.1);
-                    }
+                        .map(|(x, y)| (x + self.state.origin.0, y + self.state.origin.1));
+                    draw!(self.draw, xys);
                 }
                 Stmt::Rot(expr) => {
                     let lit = deref_lit!(expr, "Expect a Const in Rot");
@@ -134,7 +146,9 @@ impl<'ast> Interpreter<'ast> {
                     let y = deref_lit!(y, "Expect a Const in y of Origin");
                     self.state.origin = (x, y);
                 }
-                Stmt::EOI => {}
+                Stmt::EOI => {
+                    self.draw.present().unwrap();
+                }
             }
         }
         self
