@@ -3,17 +3,15 @@ pub use plotters::prelude::*;
 
 #[macro_export]
 macro_rules! draw {
-    ($root: expr, $elems: expr) => {
-        {
-            let dot = |x: f32, y: f32| {
-                EmptyElement::at((x, y)) + Circle::new((0, 0), 1, ShapeStyle::from(&RED).filled())
-            };
+    ($root: expr, $elems: expr) => {{
+        let dot = |x: f32, y: f32| {
+            EmptyElement::at((x, y)) + Circle::new((0, 0), 1, ShapeStyle::from(&RED).filled())
+        };
 
-            for elem in $elems {
-                $root.draw(&dot(elem.0 as f32, elem.1 as f32)).unwrap();
-            }
+        for elem in $elems {
+            $root.draw(&dot(elem.0 as f32, elem.1 as f32)).unwrap();
         }
-    };
+    }};
 }
 
 pub type Draw<'a> = DrawingArea<BitMapBackend<'a>, Cartesian2d<RangedCoordf32, RangedCoordf32>>;

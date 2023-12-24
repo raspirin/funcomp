@@ -3,10 +3,10 @@ use crate::interpreter::environment::{Environment, IdentTy};
 use crate::interpreter::runtime_solver::RuntimeSolver;
 use crate::interpreter::visit::{walk_expr, walk_stmt, Visitor};
 use crate::p;
+use funcomp_plot::{draw, get_drawing_area, Draw};
+use funcomp_plot::{Circle, EmptyElement, ShapeStyle, RED};
 use std::f32::consts::PI;
 use std::ops::Neg;
-use funcomp_plot::{Draw, draw, get_drawing_area};
-use funcomp_plot::{RED, EmptyElement, ShapeStyle, Circle};
 
 pub mod environment;
 pub mod runtime_solver;
