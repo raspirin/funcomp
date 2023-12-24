@@ -4,7 +4,7 @@ use plotters::prelude::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let root = get_drawing_area("out.png");
 
-    draw!(root, [(1, 1), (2, 2), (3, 300)]);
+    draw!(root, [(0, 0)]);
     root.present()?;
     Ok(())
 }
